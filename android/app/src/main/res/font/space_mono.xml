@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Downloadable Font: Space Mono
+    Source: Google Fonts (SIL Open Font License 1.1)
+    Weights: 400 (Regular), 700 (Bold)
+-->
+<font-family xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:fontProviderAuthority="com.google.android.gms.fonts"
+    app:fontProviderPackage="com.google.android.gms"
+    app:fontProviderQuery="Space Mono"
+    app:fontProviderCerts="@array/com_google_android_gms_fonts_certs">
+</font-family>

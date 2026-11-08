@@ -20,13 +20,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -50,15 +49,18 @@ import com.laterly.app.data.AppDatabase
 import com.laterly.app.data.LinkMetadata
 import com.laterly.app.data.MetadataExtractor
 import com.laterly.app.data.SavedItem
-import com.laterly.app.ui.theme.LaterlyPrimary
-import com.laterly.app.ui.theme.LaterlySurfaceContainer
-import com.laterly.app.ui.theme.LaterlySurfaceContainerHigh
 import com.laterly.app.ui.theme.LaterlyTheme
+import com.laterly.app.ui.theme.NdAccent
+import com.laterly.app.ui.theme.NdBorder
+import com.laterly.app.ui.theme.NdTextDisabled
+import com.laterly.app.ui.theme.NdTextSecondary
+import com.laterly.app.ui.theme.SpaceGrotesk
+import com.laterly.app.ui.theme.SpaceMono
 import kotlinx.coroutines.launch
 
 /**
- * Bottom-sheet style modal activity for ACTION_SEND.
- * Allows quick confirmation, collection assignment, and tag addition before saving.
+ * Bottom-sheet modal for ACTION_SEND intents.
+ * Nothing-style: flat surfaces, no decorative shadows, Space Mono labels.
  */
 class ShareReceiverActivity : ComponentActivity() {
 
@@ -71,7 +73,7 @@ class ShareReceiverActivity : ComponentActivity() {
         }
 
         if (initialText.isBlank()) {
-            Toast.makeText(this, "No valid link found to save", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "No valid link to save", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -86,7 +88,7 @@ class ShareReceiverActivity : ComponentActivity() {
                     onSave = { item ->
                         lifecycleScope.launch {
                             dao.insertItem(item)
-                            Toast.makeText(applicationContext, "Saved to ${item.collectionName}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(applicationContext, "[SAVED] ${item.collectionName}", Toast.LENGTH_SHORT).show()
                             finish()
                         }
                     },
@@ -111,24 +113,23 @@ fun ShareSaveSheet(
     val defaultCollections = listOf("Inbox", "Recipes", "Reading", "Travel", "Tech", "Inspiration")
 
     LaunchedEffect(rawText) {
-        val extracted = MetadataExtractor.extract(rawText)
-        metadata = extracted
+        metadata = MetadataExtractor.extract(rawText)
         isLoading = false
     }
 
-    // Modal background overlay
+    // Scrim overlay
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.5f))
+            .background(Color.Black.copy(alpha = 0.6f))
             .clickable(onClick = onDismiss),
         contentAlignment = Alignment.BottomCenter
     ) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .clickable(enabled = false) {}, // prevent dismissing when clicking content
+                .clip(RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp)) // flat, no rounding
+                .clickable(enabled = false) {},
             color = MaterialTheme.colorScheme.surface
         ) {
             Column(
@@ -136,6 +137,15 @@ fun ShareSaveSheet(
                     .fillMaxWidth()
                     .padding(20.dp)
             ) {
+                // Handle bar — minimal visual cue
+                Box(
+                    modifier = Modifier
+                        .size(width = 32.dp, height = 2.dp)
+                        .background(MaterialTheme.colorScheme.outlineVariant)
+                        .align(Alignment.CenterHorizontally)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
                 // Header
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -143,79 +153,107 @@ fun ShareSaveSheet(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Save to Laterly",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        text = "SAVE TO LATERLY",
+                        fontFamily = SpaceMono,
+                        fontSize = 11.sp,
+                        letterSpacing = 1.sp,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontWeight = FontWeight.Normal
                     )
                     Text(
                         text = "Cancel",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = NdTextSecondary,
                         modifier = Modifier.clickable(onClick = onDismiss)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 if (isLoading) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(100.dp),
+                            .height(80.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator(color = LaterlyPrimary)
+                        // Nothing: text status instead of spinner when possible, but spinner is functional
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            CircularProgressIndicator(
+                                color = NdAccent,
+                                strokeWidth = 1.dp,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "[FETCHING...]",
+                                fontFamily = SpaceMono,
+                                fontSize = 10.sp,
+                                letterSpacing = 1.sp,
+                                color = NdTextDisabled
+                            )
+                        }
                     }
                 } else {
                     val meta = metadata
                     if (meta != null) {
-                        // Preview Card
+                        // Link preview — flat, hairline border
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(LaterlySurfaceContainer, RoundedCornerShape(16.dp))
+                                .background(
+                                    MaterialTheme.colorScheme.surfaceContainer,
+                                    RoundedCornerShape(4.dp)
+                                )
                                 .padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.Top,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             if (!meta.imageUrl.isNullOrBlank()) {
                                 AsyncImage(
                                     model = meta.imageUrl,
                                     contentDescription = null,
                                     modifier = Modifier
-                                        .size(60.dp)
-                                        .clip(RoundedCornerShape(12.dp)),
+                                        .size(52.dp)
+                                        .clip(RoundedCornerShape(2.dp))
+                                        .background(MaterialTheme.colorScheme.surfaceContainerHigh),
                                     contentScale = ContentScale.Crop
                                 )
-                                Spacer(modifier = Modifier.size(12.dp))
                             }
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = meta.title,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.SemiBold,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = MaterialTheme.colorScheme.onBackground,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis
                                 )
+                                Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = meta.url,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    fontFamily = SpaceMono,
+                                    fontSize = 9.sp,
+                                    letterSpacing = 0.3.sp,
+                                    color = NdTextDisabled,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
-                        // Collection Selector
+                        // Collection label
                         Text(
-                            text = "Choose Collection",
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = "COLLECTION",
+                            fontFamily = SpaceMono,
+                            fontSize = 10.sp,
+                            letterSpacing = 1.sp,
+                            color = NdTextDisabled
                         )
                         Spacer(modifier = Modifier.height(8.dp))
 
+                        // Collection chips — flat, Space Mono
                         FlowRow(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -225,36 +263,56 @@ fun ShareSaveSheet(
                                 val isSelected = selectedCollection == col
                                 Box(
                                     modifier = Modifier
-                                        .clip(CircleShape)
-                                        .background(if (isSelected) LaterlyPrimary else LaterlySurfaceContainerHigh)
+                                        .clip(RoundedCornerShape(4.dp))
+                                        .background(
+                                            if (isSelected) MaterialTheme.colorScheme.onBackground
+                                            else MaterialTheme.colorScheme.surfaceContainerHigh
+                                        )
                                         .clickable { selectedCollection = col }
-                                        .padding(horizontal = 14.dp, vertical = 6.dp)
+                                        .padding(horizontal = 12.dp, vertical = 6.dp)
                                 ) {
                                     Text(
-                                        text = col,
-                                        color = if (isSelected) androidx.compose.ui.graphics.Color.White else MaterialTheme.colorScheme.onSurface,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Medium
+                                        text = col.uppercase(),
+                                        fontFamily = SpaceMono,
+                                        fontSize = 10.sp,
+                                        letterSpacing = 0.8.sp,
+                                        color = if (isSelected) MaterialTheme.colorScheme.background else NdTextSecondary
                                     )
                                 }
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
                         // Tags input
+                        Text(
+                            text = "TAGS",
+                            fontFamily = SpaceMono,
+                            fontSize = 10.sp,
+                            letterSpacing = 1.sp,
+                            color = NdTextDisabled
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                         OutlinedTextField(
                             value = customTags,
                             onValueChange = { customTags = it },
-                            label = { Text("Tags (comma-separated)") },
-                            placeholder = { Text("e.g. read-later, design, swift") },
+                            placeholder = {
+                                Text(
+                                    text = "read-later, design, swift",
+                                    fontFamily = SpaceMono,
+                                    fontSize = 11.sp,
+                                    color = NdTextDisabled
+                                )
+                            },
                             singleLine = true,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(4.dp),
+                            textStyle = MaterialTheme.typography.bodyMedium
                         )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
-                        // Save Button
+                        // Save button — accent red, full width
                         Button(
                             onClick = {
                                 onSave(
@@ -264,7 +322,10 @@ fun ShareSaveSheet(
                                         description = meta.description,
                                         imageUrl = meta.imageUrl,
                                         collectionName = selectedCollection,
-                                        tags = customTags.split(",").map { it.trim() }.filter { it.isNotBlank() }.joinToString(","),
+                                        tags = customTags.split(",")
+                                            .map { it.trim() }
+                                            .filter { it.isNotBlank() }
+                                            .joinToString(","),
                                         articleContent = meta.articleContent,
                                         author = meta.author,
                                         estimatedReadMinutes = meta.estimatedReadMinutes,
@@ -274,11 +335,17 @@ fun ShareSaveSheet(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(50.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = LaterlyPrimary),
-                            shape = CircleShape
+                                .height(48.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = NdAccent),
+                            shape = RoundedCornerShape(4.dp)
                         ) {
-                            Text("Save Item", fontWeight = FontWeight.Bold)
+                            Text(
+                                text = "Save",
+                                fontFamily = SpaceGrotesk,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 15.sp,
+                                color = Color.White
+                            )
                         }
                     }
                 }

@@ -1,164 +1,240 @@
 ---
-name: "Albo: Save & Organize"
-colors:
-  surface: "#fcf8f6"
-  surface-dim: "#ddd9d7"
-  surface-bright: "#fcf8f6"
-  surface-container-lowest: "#ffffff"
-  surface-container-low: "#f7f3f1"
-  surface-container: "#f4eeea"
-  surface-container-high: "#ede6e1"
-  surface-container-highest: "#e5e0db"
-  on-surface: "#1c1b1a"
-  on-surface-variant: "#6b5851"
-  outline: "#897269"
-  outline-variant: "#dcc1b6"
-  primary: "#7a2b02" # Deep terracotta / rust brown (active chips, primary FABs)
-  on-primary: "#ffffff"
-  primary-container: "#9c4215"
-  secondary: "#f7931e" # Bright amber / marigold (active bottom nav indicator)
-  on-secondary: "#ffffff"
-  secondary-container: "#fae3d2"
-  badge-article: "#f39200" # Orange pill for Article / Collection
-  badge-recipe: "#fae8dc" # Soft peach pill for Recipe
-  badge-video: "#f7ded5" # Soft rose/peach pill for Video
-  delete-tint: "#fcdcd9" # Soft red container for delete button
-  delete-content: "#d32f2f"
-  background: "#fcf8f6"
-  on-background: "#1c1b1a"
-typography:
-  brand-wordmark:
-    fontFamily: Plus Jakarta Sans / Outfit
-    fontSize: 24px
-    fontWeight: "700"
-    letterSpacing: -0.02em
-  screen-title:
-    fontFamily: Plus Jakarta Sans / Inter
-    fontSize: 20px
-    fontWeight: "500"
-  section-header:
-    fontFamily: Plus Jakarta Sans / Inter
-    fontSize: 18px
-    fontWeight: "600"
-  card-title:
-    fontFamily: Plus Jakarta Sans / Inter
-    fontSize: 15px
-    fontWeight: "600"
-    lineHeight: 20px
-  card-subtitle:
-    fontFamily: Plus Jakarta Sans / Inter
-    fontSize: 13px
-    fontWeight: "400"
-    lineHeight: 18px
-  badge:
-    fontFamily: Plus Jakarta Sans / Inter
-    fontSize: 11px
-    fontWeight: "600"
-  body-md:
-    fontFamily: Plus Jakarta Sans / Inter
-    fontSize: 14px
-    fontWeight: "400"
-    lineHeight: 20px
-rounded:
-  sm: 8px
-  md: 14px
-  card: 20px
-  pill: 9999px
-spacing:
-  gutter: 12px
-  margin: 16px
-  card-padding: 14px
+name: "Laterly — Nothing OS Design System"
+version: "2.0.0"
+updated: "2026-11-08"
 ---
 
-## Visual Source of Truth (Screenshots vs Spec)
+# Laterly Design System — Nothing-Inspired
 
-Inspection of `artifacts/screenshots/` establishes the verified design language:
-
-### 1. Header & Top App Bar
-
-- **Observed:**
-  - Left: Lowercase brand wordmark `"albo."` in bold terracotta (`#7a2b02`), followed by the screen title (e.g. `"Home"`, `"Collections"`, `"Search"`, `"Settings"`) in medium-weight text (`#1c1b1a`).
-  - Right: Circular icon buttons (search magnifier in light circle, user avatar profile icon filled with dark terracotta).
-- **Detail Screen Top Bar:** Back arrow circle button on left, title `"Collection Details"` (or Save Details), and profile circle on right.
-
-### 2. Navigation & Actions
-
-- **Bottom Navigation Bar:**
-  - Docked bottom bar with warm background (`#fcf8f6`) and 4 tabs:
-    1. **Home** (`ic_home`)
-    2. **Collections** (`ic_folder`)
-    3. **Search** (`ic_search`)
-    4. **Settings** (`ic_settings`)
-  - **Active Tab Indicator:** Fully rounded pill-container (`pill`, ~56x36px) filled with bright amber/marigold (`#f7931e`), with dark/white icon inside. Inactive icons are unadorned outlines in dark brown/black.
-- **Floating Action Buttons (FABs):**
-  - Extended FAB on Home Screen: `"＋ Save Item"` in dark terracotta pill container (`#7a2b02`).
-  - Circular FAB on Collections Screen: `＋` icon in dark terracotta circle (`#7a2b02`).
-
-### 3. Filter Chips & Segments
-
-- **Horizontal Scrolling Chips:**
-  - Selected state: Deep terracotta (`#7a2b02`) pill with white text and item count in parentheses (e.g. `"All (5)"`, `"All Items"`).
-  - Unselected state: Soft warm grey/beige (`#ede6e1`) pill with dark text.
-
-### 4. Cards & Content Tiles
-
-- **Two-Column Grid (Collections):**
-  - Generously rounded cards (`rounded: 20px` / `card`) on light neutral container (`#f7f3f1`).
-  - Upper half: Photo thumbnail with small circular category icon badge pinned to top-right.
-  - Lower half: Bold collection title (e.g. `"Recipes"`) and item count (`"42 items"`).
-- **Horizontal Carousel ("Recently Saved" on Home):**
-  - Rounded cards (~170px width) with category chip (e.g. `"Article"`, `"Recipe"`) overlaid on top-left of photo.
-  - Source domain (`medium.com`, `seriouseats.com`) in small muted text.
-  - Title and date (`"Today"`, `"Yesterday"`).
-- **Feed Rows ("Your Collection Feed" on Home):**
-  - Rounded rectangular container with circular thumbnail avatar on left.
-  - Right side: Domain, colored category pill badge, title (2 lines max), timestamp (`"Saved Oct 22"`), and quick-action icon buttons (share, bookmark).
-
-### 5. Detail Screen ("Collection Details")
-
-- **Hero Image Card:** Rounded rectangle with overlaid badges (`Article & Recipe`, favorite heart outline) and title + URL on dark gradient bottom overlay.
-- **Action Strip:** `"Visit Original Source"` with launch icon inside a soft rounded pill tile with chevron.
-- **Metadata Card:** 2x2 grid displaying `Added Date`, `Estimated Time`, `Content Type`, and `Word Count` inside soft circular/oval pill tiles.
-- **Notes Card:** Quotation badge, note text, and `"Edit"` button.
-- **Collections Assignment Card:** Rows showing collections assigned to the item, with leading circular icons and chevrons.
-- **Bottom Action Dock:** Floating dock with 4 pill buttons:
-  - `Edit` (pencil)
-  - `Move` (arrow box)
-  - `Share` (share node)
-  - `Delete` (trash can, soft light red/pink container `#fcdcd9` with red text/icon `#d32f2f`).
-
-### 6. Settings Screen
-
-- Grouped card sections:
-  - **Storage & Cache:** Storage usage progress bar, breakdown tags (`Docs`, `Media`, `Data`), and dark terracotta `"Clear Cache"` pill button.
-  - **Appearance:** Theme mode selector with 3 segmented tiles (`System`, `Light`, `Dark`). Selected state has dark terracotta background.
-  - **Connectivity & Sync:** `Offline Sync` toggle switch and `Sync over Wi-Fi only` checkbox.
-  - **About:** Version info (`Albo Mobile Version 4.8.2-stable`) and license link.
+Laterly's visual language is derived from the Nothing OS design philosophy: monochrome, typographically driven, instrument-panel precision. Warm off-white in light mode. OLED black in dark mode. One red accent, used sparingly.
 
 ---
 
-## Verified Design Tokens Summary
+## Design Direction
 
-| Token                    | Observed Value | Usage                                                   |
-| :----------------------- | :------------- | :------------------------------------------------------ |
-| `primary`                | `#7A2B02`      | Active chips, primary FAB, action pill buttons          |
-| `secondary`              | `#F7931E`      | Active bottom navigation pill indicator                 |
-| `surface`                | `#FCF8F6`      | Screen background, top app bar                          |
-| `surface-container`      | `#F4EEEA`      | Card containers, input fields, chip inactive background |
-| `surface-container-high` | `#EDE6E1`      | Inner badges, subtle pill groupings                     |
-| `on-surface`             | `#1C1B1A`      | Headings, primary text                                  |
-| `on-surface-variant`     | `#6B5851`      | Subtitles, domains, secondary metadata                  |
-| `badge-article`          | `#F39200`      | Orange tag for Articles                                 |
-| `badge-recipe`           | `#FAE8DC`      | Warm peach tag for Recipes                              |
-| `badge-video`            | `#F7DED5`      | Soft rose/peach tag for Videos                          |
-| `delete-container`       | `#FCDCD9`      | Delete button background                                |
-| `delete-tint`            | `#D32F2F`      | Delete button icon and text                             |
-| `corner-radius-card`     | `20dp`         | Main cards, hero previews, group sections               |
-| `corner-radius-pill`     | `9999dp`       | Chips, FABs, bottom dock action buttons, search bar     |
+- **Product:** A local-first read-later app for people who save links and articles to revisit with intention.
+- **Character:** Quiet, exact, unhurried — like a well-organized notebook.
+- **World:** Printed technical documentation. Manual on matte paper. Everything has a purpose.
+- **Moments:** The item title on the detail screen (primary typography hero). The count number on the Collections screen (48sp Space Grotesk hero).
+- **Signature:** Space Mono ALL CAPS metadata labels throughout — domain names, timestamps, counts. Instrument-panel tertiary text. One 4dp red dot under the active nav icon.
 
 ---
 
-## Status & Unclear Details (TBD)
+## Color Tokens
 
-- **Financial / Goal Screens (Google Stitch reference):** `search_discovery_screen.png` displays queries for "Tokyo Trip Q3 Savings", "Emergency Safety Cushion (82% completed)", and transaction search ("-$6.50 Paid via Albo..."). This indicates Stitch or another reference mock may have blended finance/budget tracking with content saving. **Status: TBD** — Clarification needed on whether financial goal tracking is in scope or if Albo Android should strictly remain a content/link/place saver per `artifacts/albo-appstore.md`.
-- **Dynamic Theming / Dark Mode:** Exact dark mode hex tokens are not shown in screenshots; standard inverted dark tones will be derived when dark mode is implemented.
+### Dark Mode (OLED)
+
+| Token            | Hex       | Role                             |
+| ---------------- | --------- | -------------------------------- |
+| Background       | `#000000` | OLED black screen background     |
+| Surface          | `#111111` | Cards, elevated surfaces         |
+| Surface Raised   | `#1A1A1A` | Secondary elevation              |
+| Border (subtle)  | `#222222` | Invisible hairlines              |
+| Border (visible) | `#333333` | Intentional separators           |
+| Text Disabled    | `#666666` | Timestamps, domain names, labels |
+| Text Secondary   | `#999999` | Descriptions, metadata           |
+| Text Primary     | `#E8E8E8` | Body text                        |
+| Text Display     | `#FFFFFF` | Titles, headlines                |
+
+### Light Mode (warm off-white)
+
+| Token            | Hex       | Role                     |
+| ---------------- | --------- | ------------------------ |
+| Background       | `#F5F5F5` | Warm off-white page      |
+| Surface          | `#FFFFFF` | Cards (subtle elevation) |
+| Surface Raised   | `#F0F0F0` | Secondary elevation      |
+| Border (subtle)  | `#E8E8E8` | Hairlines                |
+| Border (visible) | `#CCCCCC` | Intentional separators   |
+| Text Disabled    | `#999999` | Tertiary / labels        |
+| Text Secondary   | `#666666` | Secondary body           |
+| Text Primary     | `#1A1A1A` | Body text                |
+| Text Display     | `#000000` | Headings                 |
+
+### Accent & Status (identical in both modes)
+
+| Token         | Hex                    | Role                                           |
+| ------------- | ---------------------- | ---------------------------------------------- |
+| Accent (red)  | `#D71921`              | Active nav dot, delete, save button, favorites |
+| Accent Subtle | `rgba(215,25,33,0.15)` | Accent tint backgrounds                        |
+| Success       | `#4A9E5C`              | Confirmed states                               |
+| Warning       | `#D4A843`              | Caution states                                 |
+| Interactive   | `#5B9BF6` / `#007AFF`  | Tappable text links (dark / light)             |
+
+> **Red rule:** One accent per screen. The active nav dot, the favorite icon when active, the save button, and the delete action are all the same accent. Never use red decoratively.
+
+---
+
+## Typography
+
+### Font Families
+
+| Family        | Source       | License     | Role                     |
+| ------------- | ------------ | ----------- | ------------------------ |
+| Space Grotesk | Google Fonts | SIL OFL 1.1 | UI text, body, headings  |
+| Space Mono    | Google Fonts | SIL OFL 1.1 | Labels, data, timestamps |
+
+**Loading:** Android Downloadable Fonts via GMS provider (`@font/space_grotesk`, `@font/space_mono`). Fonts are declared in `res/font/` XML files. No bundled TTF assets needed — GMS handles caching.
+
+### Type Scale
+
+| Role            | Family        | Weight | Size | Letter Spacing | Use                            |
+| --------------- | ------------- | ------ | ---- | -------------- | ------------------------------ |
+| `headlineLarge` | Space Grotesk | Medium | 32sp | -0.5sp         | Hero moments, collection count |
+| `headlineSmall` | Space Grotesk | Medium | 22sp | -0.25sp        | Screen titles, reader heading  |
+| `titleLarge`    | Space Grotesk | Medium | 18sp | 0              | Card titles, detail title      |
+| `titleMedium`   | Space Grotesk | Medium | 15sp | 0              | Feed item titles               |
+| `titleSmall`    | Space Grotesk | Normal | 13sp | 0              | Secondary content titles       |
+| `bodyLarge`     | Space Grotesk | Normal | 16sp | 0              | Reader view article text       |
+| `bodyMedium`    | Space Grotesk | Normal | 14sp | 0              | Descriptions, settings rows    |
+| `bodySmall`     | Space Mono    | Normal | 11sp | 0.5sp          | Secondary monospace text       |
+| `labelMedium`   | Space Mono    | Normal | 11sp | 0.9sp          | ALL CAPS metadata labels       |
+| `labelSmall`    | Space Mono    | Normal | 10sp | 1.0sp          | Smallest ALL CAPS labels       |
+
+**Rule:** Space Mono labels are ALWAYS uppercase in code. Never lowercase Space Mono labels.
+
+---
+
+## Spacing
+
+8px base grid. All padding, margin, gap values are multiples of 4px.
+
+| Token | Value | Use                            |
+| ----- | ----- | ------------------------------ |
+| xs    | 4dp   | Icon-to-label tight gap        |
+| sm    | 8dp   | Component internal             |
+| md    | 16dp  | Standard padding               |
+| lg    | 24dp  | Group separation               |
+| xl    | 32dp  | Section breaks                 |
+| 2xl   | 48dp  | Major section / hero breathing |
+
+Screen horizontal padding: **20dp** everywhere.
+
+---
+
+## Corner Radii
+
+| Context             | Radius | Rule                            |
+| ------------------- | ------ | ------------------------------- |
+| Cards               | 4dp    | Technical, slightly rounded     |
+| Chips / filter tags | 4dp    | Consistent with cards           |
+| Buttons             | 4dp    | Technical button shape          |
+| Thumbnails          | 4dp    | Small image corners             |
+| FAB                 | 4dp    | Square FAB, no pill             |
+| Sheet / dialog      | 0dp    | Flat top edge for bottom sheets |
+
+> Nothing design rule: no border-radius > 16dp on content containers. Buttons are never pill-shaped (9999dp) except in legacy M3 Expressive. Laterly 2.0 uses 4dp consistently.
+
+---
+
+## Borders & Dividers
+
+- **Hairline dividers:** `1dp` lines using `outlineVariant` (or `NdBorder` token directly) between list rows.
+- **No card elevation:** Cards use flat surface color, never `shadowElevation > 0`.
+- **No decorative borders** around content groups — spacing alone separates sections.
+
+---
+
+## Iconography
+
+- Material Icons (already in `material-icons-extended` dependency).
+- Icon size: **20dp** in action areas, **18dp** in list rows, **22dp** in nav.
+- Icon tint: always inherits text color role — `NdTextSecondary` for inactive, `onBackground` for active, `NdAccent` for destructive.
+- No filled icons paired with outlined — use the same style throughout.
+- No emoji as icons. The Collections screen uses a text initial letter instead.
+
+---
+
+## Components
+
+### Bottom Navigation
+
+- Flat bar, 1dp hairline top border.
+- Icon-only tabs. No labels (reduces visual clutter, standard Nothing UX).
+- Active indicator: 4×4dp red dot below the active icon. No filled pill.
+- 3 tabs: Home, Collections, Search. Settings accessible from top-right icon.
+
+### Filter Chips
+
+- `RoundedCornerShape(4dp)`, flat surface.
+- Space Mono ALL CAPS text, 10sp.
+- Selected: `onBackground` fill + `background` text. Inverted monochrome, no color.
+- Unselected: `surfaceContainer` fill + `NdTextSecondary` text.
+
+### Feed Item Row
+
+- Flat, no card background. 60×60dp thumbnail with 4dp corner.
+- Hairline divider between rows.
+- Three-layer hierarchy: domain+collection (Space Mono, 10sp, NdTextDisabled) → title (titleMedium, onBackground) → description (bodyMedium, NdTextSecondary).
+- Tags: Space Mono inline text, no pill background. Max 3 visible.
+
+### Cards (Collection, Detail)
+
+- `RoundedCornerShape(4dp)`, `surfaceContainer` background.
+- No elevation. No shadow.
+
+### Buttons
+
+- Primary action: `NdAccent` fill, `Color.White` text, `RoundedCornerShape(4dp)`.
+- Secondary / text actions: `NdTextSecondary` color, no background.
+
+### Bottom Sheet (Save flow)
+
+- Flat top edge (`RoundedCornerShape(0dp)` on top).
+- 2dp wide handle bar centered at top.
+- Space Mono ALL CAPS sheet title.
+
+### Tabs (Detail screen)
+
+- Space Mono ALL CAPS tab label, 10sp.
+- 2dp red underline on active tab.
+- No filled tab backgrounds.
+
+### Empty States
+
+- No illustrations, no emoji, no sad faces.
+- Space Mono `[EMPTY]` / `[NO RESULTS]` label + one-line bodyMedium explanation.
+- Vertically centered.
+
+### Loading
+
+- Thin `CircularProgressIndicator` in accent red, 20dp size, 1dp stroke.
+- Space Mono `[FETCHING...]` label below.
+
+### Dialogs
+
+- Material 3 `AlertDialog` with Nothing typography.
+- Confirm button: `NdAccent` container.
+- Dismiss button: `TextButton`.
+
+---
+
+## Motion
+
+- No bounce, no spring, no parallax.
+- `AnimationSpec`: `tween(200ms)`, `FastOutSlowInEasing`.
+- Color and opacity transitions only. No layout animation.
+- No `animate-pulse`, no looping animations on static elements.
+
+---
+
+## System Themes
+
+The app follows the system dark/light preference via `isSystemInDarkTheme()` in `LaterlyTheme`. No manual override UI — settings screen notes "Follows system setting."
+
+---
+
+## Anti-patterns Removed in v2.0
+
+| Was (M3 Expressive v1)       | Now (Nothing v2)                      |
+| ---------------------------- | ------------------------------------- |
+| Terracotta `#7A2B02` primary | Monochrome primary + `#D71921` accent |
+| Amber `#F7931E` nav pill     | 4dp red dot indicator                 |
+| Pill-shaped nav active tab   | Icon + dot, no pill                   |
+| `shadowElevation = 8dp`      | Flat, `0dp` elevation                 |
+| Emoji icons in collections   | Text initial letter                   |
+| Gradient hero overlay        | Flat `Color.Black.copy(0.6f)` overlay |
+| `FontFamily.SansSerif`       | Space Grotesk + Space Mono            |
+| Light-only theme             | Dark + light, system-aware            |
+| `CircleShape` pills (9999dp) | `RoundedCornerShape(4dp)` technical   |
+| Colored badge chips          | Monochrome filter chips               |
+| `Plus Jakarta Sans / Inter`  | Space Grotesk + Space Mono            |

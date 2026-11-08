@@ -12,7 +12,31 @@ Current status, verified findings, blockers, and immediate next steps.
 
 ## Status Summary
 
-- **Current Phase:** UI Unslopped & M3 Expressive Polish Applied (Home & Detail Screens).
+- **Current Phase:** Nothing OS Design Transformation complete (v2.0).
+- **Branding:** Laterly (`com.laterly.app`, local SQLite database `laterly.db`).
+- **Design System:** Nothing-inspired — OLED dark / warm off-white light, Space Grotesk + Space Mono, `#D71921` accent, 4dp corner radii, flat surfaces.
+
+### Nothing Design Transformation (2026-11-08)
+
+Applied `nothing-design` and `unslop` skills across all screens. All 9 unslop passes applied in implementation order:
+
+1. **Spacing** — All values on 4dp grid. Screen horizontal padding: 20dp. List gaps: hairline 1dp dividers instead of 12dp spacedBy. Component paddings normalized.
+2. **Color** — Replaced warm terracotta (#7A2B02) + amber (#F7931E) with monochrome dark/light + single `#D71921` accent. Dark theme: OLED black. Light: #F5F5F5 warm off-white. Both modes fully specified.
+3. **Icons** — Removed emoji icons from Collections screen (now uses text initial letter). All icons: `NdTextSecondary` tint, 20dp size. No colored or filled icons.
+4. **Copy** — Replaced exclamatory/marketing copy. Sheet header now `SAVE TO LATERLY` (Space Mono). Empty states: `[EMPTY]` / `[NO RESULTS]` technical labels. No emoji in copy.
+5. **Typography** — Space Grotesk replaces system sans-serif for all UI text. Space Mono for ALL metadata labels (domains, timestamps, counts, section headers). 3-size discipline per screen.
+6. **Layout** — Detail hero simplified: no gradient overlay blob, collection label is a flat dark chip. Metadata grid: flat surface tiles, no pill backgrounds. Nav reduced to 3 tabs (Settings from top bar).
+7. **Details** — Corner radii unified to 4dp throughout. Nav active indicator: 4×4dp red dot (not amber pill). FAB: square (4dp) in accent red. Bottom sheet: flat top edge. Tabs: 2dp underline not filled tab.
+8. **Visuals** — Collections hero number (48sp Space Grotesk) is the visual. No decorative illustrations. Thumbnails: 60×60dp with 4dp corners.
+9. **Motion** — No bounce, no pulse, no animation on static elements. Gradient hero overlay removed.
+
+### Previous Phase: M3 Expressive Polish (archived)
+
+- Spacing locked to 4px/8px increments.
+- Material Icons replacing emoji nav icons.
+- Typography unified to formal M3 scale.
+- Unslopped Home and Detail screens.
+
 - **Branding:** Laterly (`com.laterly.app`, local SQLite database `laterly.db`).
 - **Unslopping Passes Executed (Home & Detail Screens):**
   - **Spacing**: Locked all paddings, margins, and gaps to strict 4px/8px increments (16dp container margins, 12dp item gaps, 8dp element padding).

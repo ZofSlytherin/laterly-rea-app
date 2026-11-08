@@ -17,11 +17,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -44,14 +44,16 @@ import coil.compose.AsyncImage
 import com.laterly.app.FilterChip
 import com.laterly.app.data.CollectionCount
 import com.laterly.app.data.SavedItemDao
-import com.laterly.app.ui.theme.LaterlyPrimary
-import com.laterly.app.ui.theme.LaterlySurfaceContainer
-import com.laterly.app.ui.theme.LaterlySurfaceContainerHigh
+import com.laterly.app.ui.theme.NdAccent
+import com.laterly.app.ui.theme.NdBorder
+import com.laterly.app.ui.theme.NdTextDisabled
+import com.laterly.app.ui.theme.NdTextSecondary
+import com.laterly.app.ui.theme.SpaceGrotesk
+import com.laterly.app.ui.theme.SpaceMono
 
 /**
- * 2-column Collections Screen matching collection_screen.png:
- * Top intro header, filter chips (All, Pinned, Shared, Archived),
- * 2-column card grid with icon overlay badge and item counts, and circular terracotta FAB.
+ * Collections screen — Nothing design system.
+ * 2-column grid, flat cards with hairline borders, Space Mono labels.
  */
 @Composable
 fun CollectionsScreen(
@@ -69,35 +71,35 @@ fun CollectionsScreen(
         CollectionCount("Design Inspirations", 0, null)
     )
 
-    // Merge database counts with defaults so all spaces appear
     val displayCollections = remember(collectionCounts) {
         val countMap = collectionCounts.associateBy { it.collectionName }
         val merged = mutableListOf<CollectionCount>()
         defaultCollections.forEach { def ->
-            val found = countMap[def.collectionName]
-            merged.add(found ?: def)
+            merged.add(countMap[def.collectionName] ?: def)
         }
-        // Add any user-created custom collections not in defaults
         collectionCounts.forEach { item ->
-            if (merged.none { it.collectionName == item.collectionName }) {
-                merged.add(item)
-            }
+            if (merged.none { it.collectionName == item.collectionName }) merged.add(item)
         }
         merged
     }
 
-    val totalActiveCount = displayCollections.size
+    val totalCount = displayCollections.size
 
     Scaffold(
         floatingActionButton = {
+            // FAB — accent red, square (technical), icon only
             FloatingActionButton(
                 onClick = onAddCollectionClick,
-                containerColor = LaterlyPrimary,
+                containerColor = NdAccent,
                 contentColor = Color.White,
-                shape = CircleShape,
+                shape = RoundedCornerShape(4.dp),
                 modifier = Modifier.padding(bottom = 60.dp)
             ) {
-                Text("＋", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Save new item",
+                    modifier = Modifier.size(20.dp)
+                )
             }
         }
     ) { innerPadding ->
@@ -106,58 +108,48 @@ fun CollectionsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp),
-            contentPadding = PaddingValues(bottom = 90.dp),
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+                .padding(horizontal = 20.dp),
+            contentPadding = PaddingValues(bottom = 100.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Header Section
+            // Header
             item(span = { GridItemSpan(2) }) {
-                Column(modifier = Modifier.padding(top = 8.dp)) {
+                Column(modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)) {
+                    // Count — the hero number on this screen
                     Text(
-                        text = "Collections",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold
+                        text = "$totalCount",
+                        fontFamily = SpaceGrotesk,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 48.sp,
+                        letterSpacing = (-1).sp,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        lineHeight = 48.sp
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "$totalActiveCount active spaces to keep life beautifully sorted",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = "SPACES",
+                        fontFamily = SpaceMono,
+                        fontSize = 11.sp,
+                        letterSpacing = 1.sp,
+                        color = NdTextDisabled
                     )
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                    // Segmented Filter Pills
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        FilterChip(
-                            label = "All ($totalActiveCount)",
-                            isSelected = selectedFilter == "All",
-                            onClick = { selectedFilter = "All" }
-                        )
-                        FilterChip(
-                            label = "Pinned",
-                            isSelected = selectedFilter == "Pinned",
-                            onClick = { selectedFilter = "Pinned" }
-                        )
-                        FilterChip(
-                            label = "Shared",
-                            isSelected = selectedFilter == "Shared",
-                            onClick = { selectedFilter = "Shared" }
-                        )
-                        FilterChip(
-                            label = "Archived",
-                            isSelected = selectedFilter == "Archived",
-                            onClick = { selectedFilter = "Archived" }
-                        )
+                    // Filter chips
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        listOf("All", "Pinned", "Shared", "Archived").forEach { filter ->
+                            FilterChip(
+                                label = filter.uppercase(),
+                                isSelected = selectedFilter == filter,
+                                onClick = { selectedFilter = filter }
+                            )
+                        }
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
 
-            // 2-Column Collection Cards
+            // 2-column collection cards
             items(displayCollections, key = { it.collectionName }) { col ->
                 CollectionCard(
                     collection = col,
@@ -173,83 +165,74 @@ fun CollectionCard(
     collection: CollectionCount,
     onClick: () -> Unit
 ) {
-    val iconEmoji = when (collection.collectionName) {
-        "Recipes" -> "🍴"
-        "Reading List", "Reading" -> "📖"
-        "Travel Places", "Travel" -> "✈"
-        "Tech Watchlist", "Tech" -> "💻"
-        "Design Inspirations", "Inspiration" -> "🎨"
-        else -> "📁"
-    }
+    // Monochrome icon initial instead of emoji
+    val initial = collection.collectionName.take(1).uppercase()
 
-    Card(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = LaterlySurfaceContainer),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            .clip(RoundedCornerShape(4.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .clickable(onClick = onClick)
     ) {
-        Column {
-            // Top Image Container with floating Category Icon badge
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(125.dp)
-                    .background(LaterlySurfaceContainerHigh)
-            ) {
-                if (!collection.latestImageUrl.isNullOrBlank()) {
-                    AsyncImage(
-                        model = collection.latestImageUrl,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    // Fallback visual illustration
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(iconEmoji, fontSize = 36.sp)
-                    }
-                }
-
-                // Top right pinned circular icon badge
+        // Image area — flat, no rounded insets
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+        ) {
+            if (!collection.latestImageUrl.isNullOrBlank()) {
+                AsyncImage(
+                    model = collection.latestImageUrl,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+                // Dark overlay so label is readable
                 Box(
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(10.dp)
-                        .size(32.dp)
-                        .clip(CircleShape)
-                        .background(Color.White.copy(alpha = 0.9f)),
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.3f))
+                )
+            } else {
+                // Initial letter — large, centered, Space Grotesk
+                Box(
+                    modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(iconEmoji, fontSize = 14.sp)
+                    Text(
+                        text = initial,
+                        fontFamily = SpaceGrotesk,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 36.sp,
+                        color = NdTextDisabled
+                    )
                 }
             }
+        }
 
-            // Bottom Labels
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(14.dp)
-            ) {
-                Text(
-                    text = collection.collectionName,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = "${collection.count} items",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+        // Labels — compact, tight spacing
+        Column(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                text = collection.collectionName,
+                fontFamily = SpaceGrotesk,
+                fontWeight = FontWeight.Medium,
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onBackground,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = "${collection.count} ITEMS",
+                fontFamily = SpaceMono,
+                fontSize = 10.sp,
+                letterSpacing = 0.5.sp,
+                color = NdTextDisabled
+            )
         }
     }
 }
-

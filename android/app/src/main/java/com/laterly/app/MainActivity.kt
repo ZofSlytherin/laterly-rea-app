@@ -18,10 +18,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -34,19 +34,13 @@ import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -71,16 +65,13 @@ import com.laterly.app.data.SavedItem
 import com.laterly.app.data.SavedItemDao
 import com.laterly.app.ui.CollectionsScreen
 import com.laterly.app.ui.SettingsScreen
-import com.laterly.app.ui.theme.BadgeArticle
-import com.laterly.app.ui.theme.BadgeRecipe
-import com.laterly.app.ui.theme.BadgeVideo
-import com.laterly.app.ui.theme.LaterlyPrimary
-import com.laterly.app.ui.theme.LaterlySecondary
-import com.laterly.app.ui.theme.LaterlySurface
-import com.laterly.app.ui.theme.LaterlySurfaceContainer
-import com.laterly.app.ui.theme.LaterlySurfaceContainerHigh
-import com.laterly.app.ui.theme.LaterlySurfaceContainerLow
 import com.laterly.app.ui.theme.LaterlyTheme
+import com.laterly.app.ui.theme.NdAccent
+import com.laterly.app.ui.theme.NdBorder
+import com.laterly.app.ui.theme.NdTextDisabled
+import com.laterly.app.ui.theme.NdTextSecondary
+import com.laterly.app.ui.theme.SpaceGrotesk
+import com.laterly.app.ui.theme.SpaceMono
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,109 +88,71 @@ class MainActivity : ComponentActivity() {
 }
 
 /**
- * Host container with docked 4-tab bottom navigation bar:
- * 0: Home Feed
- * 1: Collections Grid
- * 2: Search View
- * 3: Settings View
+ * Host container with docked 4-tab bottom navigation bar.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainAppNavigation(dao: SavedItemDao) {
     var selectedTab by remember { mutableIntStateOf(0) }
     var activeCollectionFilter by remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current
 
-    val screenTitle = when (selectedTab) {
-        0 -> "Home"
-        1 -> "Collections"
-        2 -> "Search"
-        3 -> "Settings"
-        else -> "Laterly"
-    }
-
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = "laterly.",
-                            color = LaterlyPrimary,
-                            style = MaterialTheme.typography.headlineSmall
-                        )
-                        Text(
-                            text = screenTitle,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = { selectedTab = 3 },
-                        modifier = Modifier.padding(end = 4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = "Profile",
-                            tint = LaterlyPrimary,
-                            modifier = Modifier.size(32.dp)
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = LaterlySurface
+            // Nothing-style top bar: flat, no elevation, hairline border bottom
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Brand wordmark — Space Grotesk, lowercase, accent dot
+                Text(
+                    text = "laterly.",
+                    fontFamily = SpaceGrotesk,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 22.sp,
+                    letterSpacing = (-0.5).sp,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.weight(1f)
                 )
-            )
+                // Settings nav shortcut
+                IconButton(onClick = { selectedTab = 3 }) {
+                    Icon(
+                        imageVector = if (selectedTab == 3) Icons.Filled.Settings else Icons.Outlined.Settings,
+                        contentDescription = "Settings",
+                        tint = if (selectedTab == 3) MaterialTheme.colorScheme.primary else NdTextSecondary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
         },
         bottomBar = {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                color = LaterlySurface,
-                shadowElevation = 8.dp
+            // Nothing-style nav: flat bar, hairline top border, icon-only with dot indicator
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
             ) {
+                // Top hairline
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(NdBorder)
+                )
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp, horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceAround,
+                        .padding(vertical = 12.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    BottomNavTab(
-                        label = "Home",
-                        activeIcon = Icons.Filled.Home,
-                        inactiveIcon = Icons.Outlined.Home,
-                        isSelected = selectedTab == 0,
-                        onClick = {
-                            selectedTab = 0
-                            activeCollectionFilter = null
-                        }
-                    )
-                    BottomNavTab(
-                        label = "Collections",
-                        activeIcon = Icons.Filled.Folder,
-                        inactiveIcon = Icons.Outlined.Folder,
-                        isSelected = selectedTab == 1,
-                        onClick = { selectedTab = 1 }
-                    )
-                    BottomNavTab(
-                        label = "Search",
-                        activeIcon = Icons.Filled.Search,
-                        inactiveIcon = Icons.Outlined.Search,
-                        isSelected = selectedTab == 2,
-                        onClick = { selectedTab = 2 }
-                    )
-                    BottomNavTab(
-                        label = "Settings",
-                        activeIcon = Icons.Filled.Settings,
-                        inactiveIcon = Icons.Outlined.Settings,
-                        isSelected = selectedTab == 3,
-                        onClick = { selectedTab = 3 }
-                    )
+                    NdNavTab("Home",        Icons.Filled.Home,       Icons.Outlined.Home,       selectedTab == 0) {
+                        selectedTab = 0; activeCollectionFilter = null
+                    }
+                    NdNavTab("Collections", Icons.Filled.Folder,     Icons.Outlined.Folder,     selectedTab == 1) { selectedTab = 1 }
+                    NdNavTab("Search",      Icons.Filled.Search,     Icons.Outlined.Search,     selectedTab == 2) { selectedTab = 2 }
                 }
             }
         }
@@ -246,45 +199,40 @@ fun MainAppNavigation(dao: SavedItemDao) {
     }
 }
 
+/**
+ * Nothing-style nav tab: icon + a 4dp red dot below when active.
+ * No filled pill, no label text — navigation is tertiary UI.
+ */
 @Composable
-fun BottomNavTab(
+fun NdNavTab(
     label: String,
     activeIcon: ImageVector,
     inactiveIcon: ImageVector,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    if (isSelected) {
+    Column(
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .padding(horizontal = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Icon(
+            imageVector = if (isSelected) activeIcon else inactiveIcon,
+            contentDescription = label,
+            tint = if (isSelected) MaterialTheme.colorScheme.onBackground else NdTextSecondary,
+            modifier = Modifier.size(22.dp)
+        )
+        // Active indicator: 4×4 red dot — the single accent moment in nav
         Box(
             modifier = Modifier
-                .clip(CircleShape)
-                .background(LaterlySecondary)
-                .clickable(onClick = onClick)
-                .padding(horizontal = 20.dp, vertical = 8.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = activeIcon,
-                contentDescription = label,
-                tint = Color.White,
-                modifier = Modifier.size(22.dp)
-            )
-        }
-    } else {
-        Box(
-            modifier = Modifier
-                .clip(CircleShape)
-                .clickable(onClick = onClick)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = inactiveIcon,
-                contentDescription = label,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(22.dp)
-            )
-        }
+                .size(4.dp)
+                .background(
+                    color = if (isSelected) NdAccent else Color.Transparent,
+                    shape = RoundedCornerShape(2.dp)
+                )
+        )
     }
 }
 
@@ -308,25 +256,27 @@ fun HomeFeedScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 20.dp)
     ) {
-        // Search bar - 4px grid spacing, consistent pill shape
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Search field — flat surface, hairline border, Space Grotesk placeholder
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
             placeholder = {
                 Text(
-                    text = "Search saved links, articles, notes...",
+                    text = "Search",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = NdTextDisabled
                 )
             },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = null,
-                    tint = LaterlyPrimary,
-                    modifier = Modifier.size(20.dp)
+                    tint = NdTextSecondary,
+                    modifier = Modifier.size(18.dp)
                 )
             },
             trailingIcon = {
@@ -334,83 +284,90 @@ fun HomeFeedScreen(
                     IconButton(onClick = { searchQuery = "" }) {
                         Icon(
                             imageVector = Icons.Default.Clear,
-                            contentDescription = "Clear search",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(18.dp)
+                            contentDescription = "Clear",
+                            tint = NdTextSecondary,
+                            modifier = Modifier.size(16.dp)
                         )
                     }
                 }
             },
             singleLine = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp, bottom = 4.dp),
-            shape = CircleShape,
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = LaterlySurfaceContainerLow,
-                unfocusedContainerColor = LaterlySurfaceContainerLow,
-                focusedBorderColor = LaterlyPrimary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+                focusedContainerColor   = MaterialTheme.colorScheme.surfaceContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                focusedBorderColor      = NdAccent,
+                unfocusedBorderColor    = MaterialTheme.colorScheme.outlineVariant
             ),
             textStyle = MaterialTheme.typography.bodyMedium
         )
 
-        // Filter chips carousel
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Filter chips — Space Mono ALL CAPS labels, minimal pill
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .horizontalScroll(rememberScrollState())
-                .padding(vertical = 8.dp),
+                .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             FilterChip(
-                label = "All Items",
+                label = "ALL",
                 isSelected = selectedCollection == null && selectedTag == null,
-                onClick = {
-                    selectedCollection = null
-                    selectedTag = null
-                }
+                onClick = { selectedCollection = null; selectedTag = null }
             )
-
             collections.forEach { colName ->
                 FilterChip(
-                    label = colName,
+                    label = colName.uppercase(),
                     isSelected = selectedCollection == colName,
                     onClick = {
                         selectedCollection = if (selectedCollection == colName) null else colName
                     }
                 )
             }
-
             if (selectedTag != null) {
                 FilterChip(
-                    label = "#$selectedTag ✕",
+                    label = "#${selectedTag!!.uppercase()} ✕",
                     isSelected = true,
                     onClick = { selectedTag = null }
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         if (items.isEmpty()) {
+            // Empty state: text-only, no sad illustration
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = if (searchQuery.isBlank() && selectedCollection == null && selectedTag == null)
-                        "No saves yet.\nShare a link to Laterly from any browser or app!"
-                    else
-                        "No matching saves found.",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = if (searchQuery.isBlank() && selectedCollection == null && selectedTag == null)
+                            "[EMPTY]" else "[NO RESULTS]",
+                        fontFamily = SpaceMono,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 11.sp,
+                        letterSpacing = 1.sp,
+                        color = NdTextDisabled
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = if (searchQuery.isBlank() && selectedCollection == null && selectedTag == null)
+                            "Share a link to Laterly from any app"
+                        else
+                            "No saves match this filter",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = NdTextSecondary
+                    )
+                }
             }
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(1.dp) // hairline-gap list
             ) {
                 items(items, key = { it.id }) { item ->
                     SavedItemRow(
@@ -420,6 +377,13 @@ fun HomeFeedScreen(
                             selectedTag = if (selectedTag == tag) null else tag
                         }
                     )
+                    // Hairline divider between rows
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(MaterialTheme.colorScheme.outlineVariant)
+                    )
                 }
                 item { Spacer(modifier = Modifier.height(16.dp)) }
             }
@@ -427,9 +391,7 @@ fun HomeFeedScreen(
     }
 }
 
-/**
- * Dedicated Search & Discovery view
- */
+/** Dedicated Search & Discovery view */
 @Composable
 fun SearchDiscoveryScreen(
     dao: SavedItemDao,
@@ -441,23 +403,26 @@ fun SearchDiscoveryScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 20.dp)
     ) {
+        Spacer(modifier = Modifier.height(8.dp))
+
         OutlinedTextField(
             value = query,
             onValueChange = { query = it },
             placeholder = {
                 Text(
-                    text = "Search by keyword or tag...",
-                    style = MaterialTheme.typography.bodyMedium
+                    text = "Search",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = NdTextDisabled
                 )
             },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = null,
-                    tint = LaterlyPrimary,
-                    modifier = Modifier.size(20.dp)
+                    tint = NdTextSecondary,
+                    modifier = Modifier.size(18.dp)
                 )
             },
             trailingIcon = {
@@ -466,35 +431,40 @@ fun SearchDiscoveryScreen(
                         Icon(
                             imageVector = Icons.Default.Clear,
                             contentDescription = "Clear",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(18.dp)
+                            tint = NdTextSecondary,
+                            modifier = Modifier.size(16.dp)
                         )
                     }
                 }
             },
             singleLine = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp),
-            shape = CircleShape,
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = LaterlySurfaceContainerLow,
-                unfocusedContainerColor = LaterlySurfaceContainerLow,
-                focusedBorderColor = LaterlyPrimary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+                focusedContainerColor   = MaterialTheme.colorScheme.surfaceContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                focusedBorderColor      = NdAccent,
+                unfocusedBorderColor    = MaterialTheme.colorScheme.outlineVariant
             )
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Result count — Space Mono label
         Text(
-            text = "Results (${items.size})",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface
+            text = "${items.size} RESULTS",
+            fontFamily = SpaceMono,
+            fontWeight = FontWeight.Normal,
+            fontSize = 11.sp,
+            letterSpacing = 1.sp,
+            color = NdTextSecondary
         )
-        Spacer(modifier = Modifier.height(8.dp))
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             items(items, key = { it.id }) { item ->
                 SavedItemRow(
@@ -502,12 +472,23 @@ fun SearchDiscoveryScreen(
                     onClick = { onItemClick(item) },
                     onTagClick = {}
                 )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colorScheme.outlineVariant)
+                )
             }
             item { Spacer(modifier = Modifier.height(16.dp)) }
         }
     }
 }
 
+/**
+ * Nothing-style filter chip: flat, technical corner (8dp), Space Mono ALL CAPS text.
+ * Active state: white/black background with matching text — not terracotta.
+ * The red accent is reserved for the single meaningful moment per screen.
+ */
 @Composable
 fun FilterChip(
     label: String,
@@ -516,116 +497,127 @@ fun FilterChip(
 ) {
     Box(
         modifier = Modifier
-            .clip(CircleShape)
-            .background(if (isSelected) LaterlyPrimary else LaterlySurfaceContainerHigh)
+            .clip(RoundedCornerShape(4.dp))
+            .background(
+                if (isSelected) MaterialTheme.colorScheme.onBackground
+                else MaterialTheme.colorScheme.surfaceContainer
+            )
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 12.dp, vertical = 6.dp)
     ) {
         Text(
             text = label,
-            color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.labelMedium
+            fontFamily = SpaceMono,
+            fontWeight = FontWeight.Normal,
+            fontSize = 10.sp,
+            letterSpacing = 0.8.sp,
+            color = if (isSelected) MaterialTheme.colorScheme.background else NdTextSecondary
         )
     }
 }
 
+/**
+ * Nothing-style saved item row: flat surface, no card shadow.
+ * Three-layer hierarchy: title (primary) → description (secondary) → domain+tags (tertiary).
+ * Thumbnail optional on the left; thumbnail uses 60×60 technical square.
+ */
 @Composable
 fun SavedItemRow(
     item: SavedItem,
     onClick: () -> Unit,
     onTagClick: (String) -> Unit
 ) {
-    val badgeColor = when (item.collectionName.lowercase()) {
-        "recipes" -> BadgeRecipe
-        "video", "videos" -> BadgeVideo
-        else -> BadgeArticle.copy(alpha = 0.2f)
-    }
-
-    Card(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = LaterlySurfaceContainer),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            .clickable(onClick = onClick)
+            .padding(vertical = 16.dp),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Column {
-            if (!item.imageUrl.isNullOrBlank()) {
-                AsyncImage(
-                    model = item.imageUrl,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(160.dp),
-                    contentScale = ContentScale.Crop
+        // Thumbnail — technical square, no rounded corners (Nothing aesthetic)
+        if (!item.imageUrl.isNullOrBlank()) {
+            AsyncImage(
+                model = item.imageUrl,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(60.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            // Dot-matrix placeholder — 60×60 muted surface
+            Box(
+                modifier = Modifier
+                    .size(60.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "[ ]",
+                    fontFamily = SpaceMono,
+                    fontSize = 10.sp,
+                    color = NdTextDisabled
                 )
             }
-            Column(modifier = Modifier.padding(16.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .background(badgeColor)
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
-                    ) {
-                        Text(
-                            text = item.collectionName,
-                            color = LaterlyPrimary,
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
+        }
 
-                    val domain = Uri.parse(item.url).host ?: item.url
-                    Text(
-                        text = domain,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            // Tertiary: domain + collection — Space Mono ALL CAPS
+            val domain = Uri.parse(item.url).host ?: ""
+            Text(
+                text = "${domain.uppercase()} · ${item.collectionName.uppercase()}",
+                fontFamily = SpaceMono,
+                fontWeight = FontWeight.Normal,
+                fontSize = 10.sp,
+                letterSpacing = 0.8.sp,
+                color = NdTextDisabled,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
 
-                Spacer(modifier = Modifier.height(8.dp))
+            // Primary: title — Space Grotesk Medium, 2 lines max
+            Text(
+                text = item.title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
 
+            // Secondary: description — Space Grotesk Regular, muted
+            if (!item.description.isNullOrBlank()) {
                 Text(
-                    text = item.title,
-                    style = MaterialTheme.typography.titleMedium,
+                    text = item.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = NdTextSecondary,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
+            }
 
-                if (!item.description.isNullOrBlank()) {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = item.description,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                if (item.tags.isNotBlank()) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        item.tags.split(",").map { it.trim() }.filter { it.isNotBlank() }.forEach { tag ->
+            // Tags — Space Mono, inline, no pill background
+            if (item.tags.isNotBlank()) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    item.tags.split(",")
+                        .map { it.trim() }
+                        .filter { it.isNotBlank() }
+                        .take(3) // limit visible tags to avoid visual noise
+                        .forEach { tag ->
                             Text(
                                 text = "#$tag",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = LaterlyPrimary,
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(LaterlySurfaceContainerHigh)
-                                    .clickable { onTagClick(tag) }
-                                    .padding(horizontal = 8.dp, vertical = 2.dp)
+                                fontFamily = SpaceMono,
+                                fontSize = 10.sp,
+                                letterSpacing = 0.5.sp,
+                                color = NdTextDisabled,
+                                modifier = Modifier.clickable { onTagClick(tag) }
                             )
                         }
-                    }
                 }
             }
         }

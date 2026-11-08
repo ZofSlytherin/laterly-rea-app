@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -25,195 +23,170 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.laterly.app.ui.theme.LaterlyPrimary
-import com.laterly.app.ui.theme.LaterlySurfaceContainer
-import com.laterly.app.ui.theme.LaterlySurfaceContainerHigh
+import com.laterly.app.ui.theme.NdAccent
+import com.laterly.app.ui.theme.NdBorder
+import com.laterly.app.ui.theme.NdTextDisabled
+import com.laterly.app.ui.theme.NdTextSecondary
+import com.laterly.app.ui.theme.SpaceGrotesk
+import com.laterly.app.ui.theme.SpaceMono
 
 /**
- * Settings Screen matching setting_screen.png:
- * Storage & Cache breakdown, Theme mode selector (System, Light, Dark),
- * Connectivity & Offline sync toggle, and About section.
+ * Settings screen — Nothing design system.
+ * Flat grouped rows with hairline borders. No cards or shadows.
  */
 @Composable
 fun SettingsScreen() {
-    var themeMode by remember { mutableStateOf("System") }
     var offlineSync by remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(horizontal = 20.dp)
     ) {
-        // 1. Storage & Cache Section
-        Column {
-            Text(
-                text = "Storage & Cache",
-                style = MaterialTheme.typography.titleSmall,
-                color = LaterlyPrimary,
-                fontWeight = FontWeight.Bold
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // ── Storage ──────────────────────────────────────────────────────────
+        SettingsSectionLabel("STORAGE")
+        SettingsGroup {
+            SettingsRow(
+                label = "Local storage",
+                value = "SQLite · On-device only"
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(LaterlySurfaceContainer)
-                    .padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(42.dp)
-                            .clip(CircleShape)
-                            .background(LaterlyPrimary.copy(alpha = 0.15f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("💾", fontSize = 18.sp)
-                    }
-                    Spacer(modifier = Modifier.size(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Local App Storage",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
-                        )
-                        Text(
-                            text = "Local SQLite (laterly.db) • 100% On-Device",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 12.sp
-                        )
-                    }
-                }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // ── Appearance ───────────────────────────────────────────────────────
+        SettingsSectionLabel("APPEARANCE")
+        SettingsGroup {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Theme",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Follows system setting",
+                    fontFamily = SpaceMono,
+                    fontSize = 10.sp,
+                    letterSpacing = 0.5.sp,
+                    color = NdTextDisabled
+                )
             }
         }
 
-        // 2. Appearance Section
-        Column {
-            Text(
-                text = "Appearance",
-                style = MaterialTheme.typography.titleSmall,
-                color = LaterlyPrimary,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Box(
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // ── Connectivity ─────────────────────────────────────────────────────
+        SettingsSectionLabel("CONNECTIVITY")
+        SettingsGroup {
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(LaterlySurfaceContainer)
-                    .padding(16.dp)
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
-                    Text(text = "Theme Mode", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Choose your visual preference",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 12.sp
+                        text = "Offline mode",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        listOf("System", "Light", "Dark").forEach { mode ->
-                            val isSelected = themeMode == mode
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(if (isSelected) LaterlyPrimary else LaterlySurfaceContainerHigh)
-                                    .clickable { themeMode = mode }
-                                    .padding(vertical = 12.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = mode,
-                                    color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 13.sp
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // 3. Connectivity & Sync
-        Column {
-            Text(
-                text = "Connectivity & Sync",
-                style = MaterialTheme.typography.titleSmall,
-                color = LaterlyPrimary,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(LaterlySurfaceContainer)
-                    .padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(text = "Offline Mode", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                        Text(
-                            text = "Save and read articles without internet access",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 12.sp
-                        )
-                    }
-                    Switch(
-                        checked = offlineSync,
-                        onCheckedChange = { offlineSync = it },
-                        colors = SwitchDefaults.colors(checkedThumbColor = LaterlyPrimary)
-                    )
-                }
-            }
-        }
-
-        // 4. About
-        Column {
-            Text(
-                text = "About",
-                style = MaterialTheme.typography.titleSmall,
-                color = LaterlyPrimary,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(LaterlySurfaceContainer)
-                    .padding(16.dp)
-            ) {
-                Column {
-                    Text(text = "Laterly for Android", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                    Text(text = "Version 1.0.0-mvp", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Made with warmth & privacy • Open Source",
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = "Save and read without internet",
+                        fontFamily = SpaceMono,
+                        fontSize = 10.sp,
+                        letterSpacing = 0.5.sp,
+                        color = NdTextDisabled
                     )
                 }
+                Switch(
+                    checked = offlineSync,
+                    onCheckedChange = { offlineSync = it },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = MaterialTheme.colorScheme.background,
+                        checkedTrackColor = NdAccent
+                    )
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // ── About ─────────────────────────────────────────────────────────────
+        SettingsSectionLabel("ABOUT")
+        SettingsGroup {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Laterly for Android",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "1.0.0-mvp · Open Source · Local-first",
+                    fontFamily = SpaceMono,
+                    fontSize = 10.sp,
+                    letterSpacing = 0.5.sp,
+                    color = NdTextDisabled
+                )
             }
         }
     }
 }
 
+/** Space Mono ALL CAPS section label */
+@Composable
+private fun SettingsSectionLabel(label: String) {
+    Text(
+        text = label,
+        fontFamily = SpaceMono,
+        fontSize = 10.sp,
+        letterSpacing = 1.sp,
+        color = NdTextDisabled,
+        modifier = Modifier.padding(bottom = 8.dp)
+    )
+}
+
+/** Flat bordered group container — hairline border, no shadow */
+@Composable
+private fun SettingsGroup(content: @Composable () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(4.dp))
+    ) {
+        content()
+    }
+}
+
+/** Single-row setting with label + value pair */
+@Composable
+private fun SettingsRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Text(
+            text = value,
+            fontFamily = SpaceMono,
+            fontSize = 10.sp,
+            letterSpacing = 0.5.sp,
+            color = NdTextDisabled
+        )
+    }
+}
